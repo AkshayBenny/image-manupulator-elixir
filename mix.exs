@@ -1,9 +1,9 @@
-defmodule ImageManupulator.MixProject do
+defmodule Identicon.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :image_manupulator,
+      app: :identicon,
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
