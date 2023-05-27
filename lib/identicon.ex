@@ -4,10 +4,24 @@ defmodule Identicon do
     |> hash_string
     |> get_rgb
     |> build_grid
+    |> filter_odd_squares
+
+
   end
 
-  def build_grid(%Identicon.Image{hex: hex_list, color: rgb}) do
-    Enum.chunk(hex_list, 3) |> mirror_rows
+  def filter_odd_squares(%Identicon.Image{grid: grid} = image) do
+    Enum.filter(grid, fn({_, index}) -> rem(index, 2) !== 0 end)
+  end
+
+  def build_grid(%Identicon.Image{hex: hex_list} = image) do
+    grid =
+      hex_list
+      |> Enum.chunk(3)
+      |> mirror_rows
+      |> List.flatten
+      |> Enum.with_index
+
+  %Identicon.Image{image | grid: grid}
   end
   def hash_string(input) do
     hex = :crypto.hash(:md5, input)  |> :binary.bin_to_list
@@ -26,10 +40,9 @@ defmodule Identicon do
 
   def mirror_rows(grid) do
     for row <- grid do
-      first_half = row
       second_half_reversed = row |> Enum.reverse
       [_head | second_half] = second_half_reversed
-      first_half ++ second_half
+      row ++ second_half
     end
   end
 end
